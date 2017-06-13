@@ -11,9 +11,9 @@ data Cell = Cell {
 
 type Simulation = Array (Int, Int) Cell
 
-createSimulation :: Simulation 
-createSimulation = listArray ((0, 0), (9, 9)) comprehension
-  where comprehension = [Cell False (x, y) | x <- [0..9], y <- [0..9]]
+createSimulation :: Int -> Simulation 
+createSimulation n = listArray ((0, 0), (n, n)) comprehension
+  where comprehension = [Cell False (x, y) | x <- [0..n], y <- [0..n]]
 
 toggle :: Simulation -> Cell -> Simulation 
 toggle sim cell = sim // [((y, x), cell { state = not current })]
@@ -60,10 +60,10 @@ advance :: Simulation -> Simulation
 advance sim = foldl (fate sim) sim (elems sim) 
 
 advanceN :: Int -> Simulation -> Simulation
-advanceN times sim = foldl (\s n -> advance s) glider [0..times]
+advanceN times sim = foldl (\s n -> advance s) sim [0..times]
 
-glider :: Simulation
-glider = foldl (\sim (x, y) -> toggle sim (sim ! (y, x))) sim pairs
+glider :: Int -> Simulation
+glider n = foldl (\sim (x, y) -> toggle sim (sim ! (y, x))) sim pairs
   where
-    sim = createSimulation
+    sim = createSimulation n
     pairs = [(3, 3), (2, 3), (1, 3), (3, 2), (2, 1)]
