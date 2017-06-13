@@ -10,23 +10,15 @@ import Foreign.C.Types
 import Control.Monad.IO.Class (MonadIO)
 import qualified SDL
 
-screenSize  = SDL.V2 800 600
-white = SDL.V4 255 255 255 255
+screenScale = 800
+white = SDL.V4 78 78 78 255
 
 main :: IO ()
 main = getArgs >>= handle
 
 handle :: [String] -> IO ()
-handle [n, mode] =
-  case mode of
-    "sdl"      -> runSDLGlider $ read n
-    "terminal" -> runGlider $ read n
-    _          -> putStrLn "only 'sdl' and 'terminal' supported"
-
 handle [n]       = runGlider $ read n
-handle _         = do
-  putStrLn "defaulting to terminal output"
-  runGlider 10
+handle _         = runSDLGlider 
 
 runGlider :: Int -> IO ()
 runGlider n = loop glider' 
@@ -37,11 +29,11 @@ runGlider n = loop glider'
           loop $ advance g
 
 
-runSDLGlider :: Int -> IO ()
-runSDLGlider n = do
+runSDLGlider :: IO ()
+runSDLGlider = do
   SDL.initialize [SDL.InitVideo]
-  window  <- SDL.createWindow "Life" SDL.defaultWindow { SDL.windowInitialSize = screenSize }
-  loop window (glider n)
+  window  <- SDL.createWindow "Life" SDL.defaultWindow { SDL.windowInitialSize = SDL.V2 screenScale screenScale }
+  loop window (glider $ fromIntegral $ screenScale `div` 16)
   SDL.destroyWindow window
   SDL.quit
   where 
