@@ -27,6 +27,7 @@ executable life-exe
   build-depends:       base
                      , life
                      , sdl2 >= 2.2.0
+                     , array >= 0.5.1.1
   default-language:    Haskell2010
 
 test-suite life-test

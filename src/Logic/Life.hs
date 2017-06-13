@@ -3,7 +3,6 @@ module Logic.Life where
 import Data.Array
 import Control.Monad
 
--- (x, y) is used for all co-ordinates in this program
 data Cell = Cell {
   state       :: Bool
 , coordinates :: (Int, Int)
