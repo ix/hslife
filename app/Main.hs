@@ -33,14 +33,14 @@ runSDLGlider :: IO ()
 runSDLGlider = do
   SDL.initialize [SDL.InitVideo]
   window  <- SDL.createWindow "Life" SDL.defaultWindow { SDL.windowInitialSize = SDL.V2 screenScale screenScale }
-  loop window (glider $ fromIntegral $ screenScale `div` 16)
+  sprite <- SDL.loadBMP "assets/cell.bmp"
+  loop sprite window (glider $ fromIntegral $ screenScale `div` 16)
   SDL.destroyWindow window
   SDL.quit
   where 
-    loop win sim = do
+    loop sprite win sim = do
       events <- SDL.pollEvents
       surf   <- SDL.getWindowSurface win
-      sprite <- SDL.loadBMP "assets/cell.bmp"
       SDL.surfaceFillRect surf Nothing white
       forM_ (elems sim) $ \cell -> do 
         t <- translate sprite cell
@@ -50,7 +50,7 @@ runSDLGlider = do
       SDL.updateWindowSurface win
       threadDelay 31000
       let quit = elem SDL.QuitEvent $ map SDL.eventPayload events in
-        if quit then return () else loop win $ advance sim
+        if quit then return () else loop sprite win $ advance sim
 
     translate :: MonadIO m => SDL.Surface -> Cell -> m (SDL.Point SDL.V2 CInt)
     translate sprite cell = do
